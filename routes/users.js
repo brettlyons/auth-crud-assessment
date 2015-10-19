@@ -73,7 +73,7 @@ router.post('/signin', function(req, res, next) {
     errors.push("A password is required")
     renderSignOnErrors();
   }
-  collection.findOne({ name: req.body.loginEmail }, function(err, dbEntry) {
+  users.findOne({ loginEmail: req.body.loginEmail }, function(err, dbEntry) {
     if(!dbEntry) {
       errors.push("Username/password not found");
     }
