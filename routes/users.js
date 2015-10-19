@@ -85,9 +85,11 @@ router.post('/signin', function(req, res, next) {
     if(errors.length > 0) {
       renderSignOnErrors();
     }
-    req.session.signedIn = true;
-    req.session.name = dbEntry.loginName;
-    res.redirect('/students');
+    if(dbEntry) {
+      req.session.signedIn = true;
+      req.session.name = dbEntry.loginName;
+      res.redirect('/students');
+    }
   });
   function renderSignOnErrors() {
     res.render('signin', {
