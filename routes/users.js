@@ -29,21 +29,27 @@ router.post('/signup', function(req, res, next) {
   if((new RegExp('^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$').test(req.body.loginEmail))) {
     errors.push("Valid email address required.")
   }
-  if(errors.length > 0) {
-    res.render('signup', {errors: errors});
-  }
-  if(errors.length < 1) {
-    //ugh.  how to remove this if statement via refactor ? 
-    // hash password
-    // insert into users db.
-    users.insert({
-      loginEmail: req.body.loginEmail,
-      loginPass: bcrypt.hashSync(req.body.loginPass, 12)
-    });
-    req.session.signedIn = true;
-    req.session.name = req.body.loginEmail;
-  }
-  res.redirect('/users/students')
+  users.find({
+    loginEmail: req.body.loginEmail
+  }, function(userEntry) {
+    if(userEntry) {
+      errors.push("That email is already in use by someone else, or by you")
+    }
+    if(errors.length > 0) {
+      res.render('signup', {errors: errors});
+    }
+    if(errors.length < 1) {
+      // hash password
+      // insert into users db.
+      users.insert({
+        loginEmail: req.body.loginEmail,
+        loginPass: bcrypt.hashSync(req.body.loginPass, 12)
+      });
+      req.session.signedIn = true;
+      req.session.name = req.body.loginEmail;
+    }
+    res.redirect('/users/students')
+  });
 });
 
 
@@ -56,17 +62,20 @@ router.get('/signin', function (req, res, next) {
     name: req.body.name
   });
 });
-
+// signin is unfinished
 router.post('/signin', function(req, res, next) {
   //set cookie
   req.session.name = req.body.name;
   //validate input by checking database
   //check usersdb for password with bcrypt.compare()
-
-
   
+  users.findOne({loginEmail:req.body.email}, function(userEntry) {
+    if(bcrypt.compare(req.body.loginPass, userEntry.loginPass)) {
+      req.session.signedIn = true;
+      req.session.name = userEntry.loginEmail;
+    }
+  });
   // if true, login, change cookie , etc...
-  req.session.signedIn = true;
 });
 
 router.get('/signout', function(req, res, next) {
