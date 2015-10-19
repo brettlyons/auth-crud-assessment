@@ -76,11 +76,13 @@ router.post('/signin', function(req, res, next) {
   users.findOne({ loginEmail: req.body.loginEmail }, function(err, dbEntry) {
     if(!dbEntry) {
       errors.push("Username/password not found");
+      renderSignOnErrors();
     }
     // console.log(bcrypt.compare(req.body.password, dbEntry.passwordDigest));
     if(req.body.loginEmail !== dbEntry.loginEmail
        || !(bcrypt.compareSync(req.body.loginPass, dbEntry.loginPass))) {
       errors.push("Username/password doesn't match");
+      renderSignOnErrors();
     }
     if(errors.length > 0) {
       renderSignOnErrors();
