@@ -70,17 +70,18 @@ router.post('/signin', function(req, res, next) {
   //check usersdb for password with bcrypt.compare()
 
   users.findOne({loginEmail:req.body.email}, function(userEntry) {
-    if(bcrypt.compare(req.body.loginPass, userEntry.loginPass)) {
+    if(bcrypt.compareSync(req.body.loginPass, userEntry.loginPass)) {
       req.session.signedIn = true;
       req.session.name = userEntry.loginEmail;
     }
   });
   // if true, login, change cookie , etc...
+  res.redirect('/students');
 });
 
 router.get('/signout', function(req, res, next) {
   req.session = null; // cookie deleted
-  res.render('/signin');
+  res.redirect('/signin');
 });
 
 function authdPredicate (cookie) {
