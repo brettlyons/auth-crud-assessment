@@ -63,12 +63,7 @@ router.get('/signin', function (req, res, next) {
   });
 });
 router.post('/signin', function(req, res, next) {
-  //set cookie
-  //validate input by checking database
-  //check usersdb for password with bcrypt.compare()
-
-  users.findOne({loginEmail:req.body.email}, function(userEntry) {
-    console.log(userEntry, bcrypt.compareSync(req.body.loginPass, userEntry.loginPass));
+  users.find({loginEmail: req.body.loginEmail}, function(userEntry) {
     if(bcrypt.compareSync(req.body.loginPass, userEntry.loginPass)) {
       req.session.signedIn = true;
       req.session.name = userEntry.loginEmail;
@@ -81,7 +76,6 @@ router.post('/signin', function(req, res, next) {
       });
     }
   });
-  // if true, login, change cookie , etc...
 });
 
 router.get('/signout', function(req, res, next) {
