@@ -62,7 +62,6 @@ router.get('/signin', function (req, res, next) {
     name: req.body.name
   });
 });
-// signin is unfinished
 router.post('/signin', function(req, res, next) {
   //set cookie
   req.session.name = req.body.name;
@@ -73,10 +72,17 @@ router.post('/signin', function(req, res, next) {
     if(bcrypt.compareSync(req.body.loginPass, userEntry.loginPass)) {
       req.session.signedIn = true;
       req.session.name = userEntry.loginEmail;
+      res.redirect('/students');
+    }
+    else {
+      res.render('signin', {
+        title: 'the sign in page',
+        errors: errors
+      });
     }
   });
   // if true, login, change cookie , etc...
-  res.redirect('/students');
+
 });
 
 router.get('/signout', function(req, res, next) {
