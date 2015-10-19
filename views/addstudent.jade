@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  p Add a student
+  p
+    form(method="POST" action='/users/students/add')
+      label(for='studentname') Student Name:
+      input(type='text' name='studentname')
+      label(for='studentemail') Student Email:
+      input(type='text' name='studentemail')
+      input(type='submit' value='Add Student')
+  p
+  ul
+    if(errors)
+      for error in errors
+        li #{error}

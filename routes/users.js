@@ -9,18 +9,41 @@ var bcrypt = require('bcrypt');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('Much /users root, such nothing here');
+  res.render('index', {title: "Users With Crud"});
 });
 
 router.get('/signup', function(req, res, next) {
-  res.render('signup');
+  res.render('signup'); 
 });
 
 router.post('/signup', function(req, res, next) {
-  
+  if(req.session.signedIn) {
+    res.redirect('/students')
+  }
+  var errors = []; // error accumulation 
+  //console.log(req.body.loginPass, req.body.loginEmail);
   // validate input
-  // hash password
-  // insert into users db.
+  if(req.body.loginPass.length < 8) {
+    errors.push("The password must be longer than 8 characters")
+  }
+  if((new RegExp('^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$').test(req.body.loginEmail))) {
+    errors.push("Valid email address required.")
+  }
+  if(errors.length > 0) {
+    res.render('signup', {errors: errors});
+  }
+  if(errors.length < 1) {
+    //ugh.  how to remove this if statement via refactor ? 
+    // hash password
+    // insert into users db.
+    users.insert({
+      loginEmail: req.body.loginEmail,
+      loginPass: bcrypt.hashSync(req.body.loginPass, 12)
+    });
+    req.session.signedIn = true;
+    req.session.name = req.body.loginEmail;
+  }
+  res.redirect('/users/students')
 });
 
 
@@ -29,7 +52,8 @@ router.get('/signin', function (req, res, next) {
   else { req.body.name = '';} // if previous attempt at login failed, populate field with name from prev. attempt
   
   res.render('signin', {
-    name: req.body.name,
+    title: 'the sign in page',
+    name: req.body.name
   });
 });
 
@@ -64,21 +88,46 @@ router.get('/students/add', function(req, res, next) {
 
 router.post('/students/add', function(req, res, next) {
   authdPredicate(req.session);
-  students.insert()
+  var errors = [];
+  if(req.body.studentname.length < 1) {
+    errors.push("The students name must be filled in")
+  }
+  if((new RegExp('^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$').test(req.body.studentemail))) {
+    errors.push("The students email must be a valid email address.")
+  }
+  if(errors.length > 0 ){
+      res.render('addstudent', {
+      errors: errors
+    });
+  }
+  if(errors.length < 1) {
+    students.insert({
+      name: req.body.studentname,
+      email: req.body.studentemail
+    });
+    res.redirect('/users/students');
+  }
 });
 
 // since it's student or students, careful of plural vs nonplural
 router.get('/students', function(req, res, next) {
   authdPredicate(req.session);
   students.find({}, function(err, studentsList) {
-    res.render('students', { students: studentsList });
+    res.render('students', {
+      title: 'Students listing',
+      students: studentsList
+    });
   });
 });
 
 router.get('/students/:id', function(req, res, next) {
   authdPredicate(req.session);
   students.findOne({_id: req.params.id}, function(err, singleStudent) {
-    res.render('student', { student: singleStudent });
+    res.render('displaystudent', {
+      title: "Single Student Info Display",
+      studentname: singleStudent.name,
+      studentemail: singleStudent.email
+    });
   });
 });
 
