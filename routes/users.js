@@ -63,20 +63,28 @@ router.get('/signin', function (req, res, next) {
   });
 });
 router.post('/signin', function(req, res, next) {
-  users.find({loginEmail: req.body.loginEmail}, function(userEntry) {
-    console.log(userEntry);
-    if(bcrypt.compareSync(req.body.loginPass, userEntry.loginPass)) {
-      req.session.signedIn = true;
-      req.session.name = userEntry.loginEmail;
-      res.redirect('/students');
-    }
-    else {
-      res.render('/signin', {
-        title: 'the sign in page',
-        errors: ["Your signon wasn't found in the db, perhaps you should sign up first."] 
-      });
-    }
-  });
+  if(req.body.loginPass && req.body.loginEmail) {
+    users.find({loginEmail: req.body.loginEmail}, function(userEntry) {
+      console.log(userEntry);
+      if(bcrypt.compareSync(req.body.loginPass, userEntry.loginPass)) {
+        req.session.signedIn = true;
+        req.session.name = userEntry.loginEmail;
+        res.redirect('/students');
+      }
+      else {
+        res.render('/signin', {
+          title: 'the sign in page',
+          errors: ["Your signon wasn't found in the db, perhaps you should sign up first?"] 
+        });
+      }
+    });
+  }
+  else {
+    res.render('/signin', {
+      title: 'the sign in page',
+      errors: ["All fields are required"] 
+    });
+  }
 });
 
 router.get('/signout', function(req, res, next) {
