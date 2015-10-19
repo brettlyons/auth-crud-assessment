@@ -83,18 +83,17 @@ router.post('/signin', function(req, res, next) {
       errors.push("Username/password doesn't match");
     }
     if(errors.length > 0) {
-    res.
-
+      renderSignOnErrors();
     }
     req.session.signedIn = true;
     req.session.name = dbEntry.loginName;
     res.redirect('/students');
   });
   function renderSignOnErrors() {
-    render('signin', {
+    res.render('signin', {
       title: "Sign in - again?",
       errors: errors
-    })
+    });
   }
 });
 
