@@ -13,14 +13,14 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/signup', function(req, res, next) {
-  res.render('signup'); 
+  res.render('signup');
 });
 
 router.post('/signup', function(req, res, next) {
   if(req.session.signedIn) {
     res.redirect('/students')
   }
-  var errors = []; // error accumulation 
+  var errors = []; // error accumulation
   //console.log(req.body.loginPass, req.body.loginEmail);
   // validate input
   if(req.body.loginPass.length < 8) {
@@ -48,7 +48,7 @@ router.post('/signup', function(req, res, next) {
       req.session.signedIn = true;
       req.session.name = req.body.loginEmail;
     }
-    res.redirect('/users/students')
+    res.redirect('/students')
   });
 });
 
@@ -56,7 +56,7 @@ router.post('/signup', function(req, res, next) {
 router.get('/signin', function (req, res, next) {
   if(req.session.name) { req.body.name = req.session.name; }
   else { req.body.name = '';} // if previous attempt at login failed, populate field with name from prev. attempt
-  
+
   res.render('signin', {
     title: 'the sign in page',
     name: req.body.name
@@ -68,7 +68,7 @@ router.post('/signin', function(req, res, next) {
   req.session.name = req.body.name;
   //validate input by checking database
   //check usersdb for password with bcrypt.compare()
-  
+
   users.findOne({loginEmail:req.body.email}, function(userEntry) {
     if(bcrypt.compare(req.body.loginPass, userEntry.loginPass)) {
       req.session.signedIn = true;
@@ -85,7 +85,7 @@ router.get('/signout', function(req, res, next) {
 
 function authdPredicate (cookie) {
   if(!cookie.signedIn) {
-    res.redirect('/users/signin');
+    res.redirect('/signin');
   }
   return null;
 }
@@ -114,7 +114,7 @@ router.post('/students/add', function(req, res, next) {
       name: req.body.studentname,
       email: req.body.studentemail
     });
-    res.redirect('/users/students');
+    res.redirect('/students');
   }
 });
 
