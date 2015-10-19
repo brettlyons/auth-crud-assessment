@@ -75,9 +75,12 @@ router.post('/signin', function(req, res, next) {
   }
   users.findOne({ loginEmail: req.body.loginEmail }, function(err, dbEntry) {
     if(!dbEntry) {
+      console.log('DINGDINGDING');
       errors.push("Username/password not found");
       renderSignOnErrors();
+      return;
     }
+    console.log(dbEntry);
     // console.log(bcrypt.compare(req.body.password, dbEntry.passwordDigest));
     if(req.body.loginEmail !== dbEntry.loginEmail
        || !(bcrypt.compareSync(req.body.loginPass, dbEntry.loginPass))) {
@@ -98,6 +101,7 @@ router.post('/signin', function(req, res, next) {
       title: "Sign in - again?",
       errors: errors
     });
+    return;
   }
 });
 
