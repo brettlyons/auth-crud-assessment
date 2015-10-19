@@ -77,12 +77,11 @@ router.post('/signin', function(req, res, next) {
     else {
       res.render('signin', {
         title: 'the sign in page',
-        errors: errors
+        errors: ["Your signon wasn't found in the db, perhaps you should sign up first."] 
       });
     }
   });
   // if true, login, change cookie , etc...
-
 });
 
 router.get('/signout', function(req, res, next) {
