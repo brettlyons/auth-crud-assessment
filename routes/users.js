@@ -80,6 +80,8 @@ router.post('/signin', function(req, res, next) {
 });
 
 router.get('/signout', function(req, res, next) {
+  req.session.name = null;
+  req.session.signedIn = false;
   req.session = null; // cookie deleted
   res.redirect('/signin');
 });
