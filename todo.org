@@ -1,0 +1,15 @@
+- [X] GET/POST "/user/signup"
+- [ ] validate email / password
+- [X] GET/POST "user/signin"
+- [ ] hash passwd / check against db.find({passdigest})
+- [ ] set cookie
+- [X] GET/POST "/user/signout"
+- [ ] req.session = null;
+- [ ] GET/POST "/user/addstudent"
+- [ ] put student name/phone # in database, validate to ensure no empty fields, (light strictness)
+- [X] GET "/user/students"
+- [ ] display template
+- [X] display a list of students db.find({}, ...);
+- [X] GET "/user/students/:id" 
+- [ ] display template
+- [X] db.findOne({req.body.id}, ...);
