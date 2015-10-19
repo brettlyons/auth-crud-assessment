@@ -62,28 +62,39 @@ router.get('/signin', function (req, res, next) {
     name: req.body.name
   });
 });
+
 router.post('/signin', function(req, res, next) {
-  if(req.body.loginPass && req.body.loginEmail) {
-    users.find({loginEmail: req.body.loginEmail}, function(userEntry) {
-      console.log(userEntry);
-      if(bcrypt.compareSync(req.body.loginPass, userEntry.loginPass)) {
-        req.session.signedIn = true;
-        req.session.name = userEntry.loginEmail;
-        res.redirect('/students');
-      }
-      else {
-        res.render('/signin', {
-          title: 'the sign in page',
-          errors: ["Your signon wasn't found in the db, perhaps you should sign up first?"] 
-        });
-      }
-    });
+  var errors = [];
+  if(req.body.loginEmail.trim().length == 0) {
+    errors.push("A username is required");
+    renderSignOnErrors();
   }
-  else {
-    res.render('/signin', {
-      title: 'the sign in page',
-      errors: ["All fields are required"] 
-    });
+  if(req.body.loginPass.trim().length == 0) {
+    errors.push("A password is required")
+    renderSignOnErrors();
+  }
+  collection.findOne({ name: req.body.loginEmail }, function(err, dbEntry) {
+    if(!dbEntry) {
+      errors.push("Username/password not found");
+    }
+    // console.log(bcrypt.compare(req.body.password, dbEntry.passwordDigest));
+    if(req.body.loginEmail !== dbEntry.loginEmail
+       || !(bcrypt.compareSync(req.body.loginPass, dbEntry.loginPass))) {
+      errors.push("Username/password doesn't match");
+    }
+    if(errors.length > 0) {
+    res.
+
+    }
+    req.session.signedIn = true;
+    req.session.name = dbEntry.loginName;
+    res.redirect('/students');
+  });
+  function renderSignOnErrors() {
+    render('signin', {
+      title: "Sign in - again?",
+      errors: errors
+    })
   }
 });
 
