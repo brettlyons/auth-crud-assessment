@@ -47,8 +47,8 @@ router.post('/signup', function(req, res, next) {
       });
       req.session.signedIn = true;
       req.session.name = req.body.loginEmail;
+      res.redirect('/students')
     }
-    res.redirect('/students')
   });
 });
 
