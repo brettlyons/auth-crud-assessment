@@ -2,6 +2,9 @@
 logs
 *.log
 
+# crypto generated keys for HTTPS cookie security
+.env
+
 # Runtime data
 pids
 *.pid
