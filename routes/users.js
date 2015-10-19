@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-require('dotenv').load();
+//require('dotenv').load();
 var db = require('monk')(process.env.MONGOLAB_URI);
 var students = db.get('students-assessment') // Somehow the name of the db became the identity function of the activity.  Triple pun score.
 var users = db.get('users-assessment');
