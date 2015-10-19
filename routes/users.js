@@ -35,9 +35,6 @@ router.post('/signup', function(req, res, next) {
     if(userEntry) {
       errors.push("That email is already in use by someone else, or by you")
     }
-    if(errors.length > 0) {
-      res.render('signup', {errors: errors});
-    }
     if(errors.length < 1) {
       // hash password
       // insert into users db.
@@ -48,6 +45,9 @@ router.post('/signup', function(req, res, next) {
       req.session.signedIn = true;
       req.session.name = req.body.loginEmail;
       res.redirect('/students')
+    }
+    if(errors.length > 0) {
+      res.render('signup', {errors: errors});
     }
   });
 });
